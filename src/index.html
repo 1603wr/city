@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        
+        .wrap>ul>li>ul {
+            display: none;
+        }
+        
+        .wrap ul {
+            width: 250px;
+            border: 1px solid #ccc;
+        }
+        
+        .wrap ul li {
+            border-bottom: 1px solid #ccc;
+            position: relative;
+        }
+        
+        .wrap ul li h2 {
+            font-size: 10px;
+            font-weight: 200;
+        }
+        
+        .wrap ul li h2.cur:after {
+            content: '>';
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+        
+        .wrap ul li ul {
+            position: absolute;
+            left: 400px;
+            top: 0;
+            display: none;
+        }
+    </style>
+    <script src="./data.js"></script>
+    <script src="jquery-2.1.1.min.js"></script>
+</head>
+
+<body>
+    <div class="wrap"></div>
+    <!-- <ul>
+    <li>
+        <h2></h2>
+        <ul>
+            <li></li>
+        </ul>
+    </li>
+</ul> -->
+</body>
+<script>
+    var box = document.querySelector('.wrap');
+
+    function render(data) {
+        var ele = `<ul>`;
+        data.map(function(v, i) {
+            if (v.kpListVOs.length) {
+                ele += `<li><h2 class="cur" data-id=${v.kpLevel}>${v.kpName}</h2>${render(v.kpListVOs)}</li>`;
+            } else {
+                ele += `<li><h2>${v.kpName}</h2></li>`;
+            }
+
+        })
+        ele += `</ul>`;
+        return ele;
+    };
+    box.innerHTML = render(data);
+
+    //点击显示隐藏
+    box.onclick = function(e) {
+        if (e.target.className == "cur") {
+            console.log(e.target)
+
+            e.target.nextElementSibling.style.display = "block";
+        }
+    }
+    $('.wrap').on('click', 'h2', function() {
+        var index = $(this).data('id');
+        //找到所有的h2 看是几级菜单
+        $('ul h2').each(function() {
+                //让点击的这个显示
+                if ($(this).data('id') == index) {
+                    $(this).next().hide();
+                }
+            })
+            //让id为1的所有的都隐藏
+        $(this).next().show();
+        return false;
+
+    })
+</script>
+
+</html>
